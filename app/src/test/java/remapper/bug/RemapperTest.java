@@ -25,17 +25,28 @@ import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.util.CheckClassAdapter;
 
 class RemapperTest {
-  @Test
-  void remapper() throws IOException {
-    assertEquals("ok", "ok");
+  @Test void calcite35() throws IOException {
+    runTest("SqlFunctions-1.35.0.class", false);
+  }
+  @Test void calcite35WithCheck() throws IOException {
+    runTest("SqlFunctions-1.35.0.class", true);
+  }
 
-    byte[] bytecode = Files.readAllBytes(Paths.get("../SqlFunctions.class"));
-    Remapper remapper = new Remapper() {
-    };
+  @Test void calcite36() throws IOException {
+    runTest("SqlFunctions-1.36.0.class", false);
+  }
+  @Test void calcite36WithCheck() throws IOException {
+    runTest("SqlFunctions-1.36.0.class", true);
+  }
+
+  void runTest(String filename, boolean checkClass) throws IOException {
+    byte[] bytecode = Files.readAllBytes(Paths.get("../" + filename));
+
+    Remapper remapper = new Remapper() {};
 
     ClassReader classReader = new ClassReader(bytecode);
     ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-    ClassVisitor classVisitor = new CheckClassAdapter(classWriter);
+    ClassVisitor classVisitor = checkClass ? new CheckClassAdapter(classWriter) : classWriter;
 
     ClassRemapper classRemapper = new ClassRemapper(classVisitor, remapper);
 
@@ -47,8 +58,6 @@ class RemapperTest {
     ClassWriter classWriter2 = new ClassWriter(ClassWriter.COMPUTE_MAXS);
     ClassVisitor visitor = new ClassVisitor(Opcodes.ASM9, classWriter2) {};
     classReader2.accept(visitor, ClassReader.EXPAND_FRAMES);
-
-
 
   }
 }
