@@ -3,8 +3,6 @@
 ```
 ❯ gradle test
 
-> Task :app:test FAILED
-
 RemapperTest > remapper() FAILED
     java.lang.ArrayIndexOutOfBoundsException: Index 65536 out of bounds for length 297
         at org.objectweb.asm.ClassReader.readLabel(ClassReader.java:2695)
@@ -15,18 +13,22 @@ RemapperTest > remapper() FAILED
         at org.objectweb.asm.ClassReader.accept(ClassReader.java:745)
         at org.objectweb.asm.ClassReader.accept(ClassReader.java:425)
         at remapper.bug.RemapperTest.remapper(RemapperTest.java:44)
+```
 
-1 test completed, 1 failed
+When using CheckClassAdapter
 
-FAILURE: Build failed with an exception.
+```
+❯ gradle test
+RemapperTest > remapper() FAILED
+    java.lang.IllegalArgumentException: Invalid end label (must be visited first)
+        at org.objectweb.asm.util.CheckMethodAdapter.checkLabel(CheckMethodAdapter.java:1453)
+        at org.objectweb.asm.util.CheckMethodAdapter.visitLocalVariableAnnotation(CheckMethodAdapter.java:996)
+        at org.objectweb.asm.MethodVisitor.visitLocalVariableAnnotation(MethodVisitor.java:757)
+        at org.objectweb.asm.commons.MethodRemapper.visitLocalVariableAnnotation(MethodRemapper.java:257)
+        at org.objectweb.asm.ClassReader.readCode(ClassReader.java:2614)
+        at org.objectweb.asm.ClassReader.readMethod(ClassReader.java:1515)
+        at org.objectweb.asm.ClassReader.accept(ClassReader.java:745)
+        at org.objectweb.asm.ClassReader.accept(ClassReader.java:425)
+        at remapper.bug.RemapperTest.remapper(RemapperTest.java:42)
 
-* What went wrong:
-Execution failed for task ':app:test'.
-> There were failing tests. See the report at: file:///Users/bob/foos/remapper-bug/app/build/reports/tests/test/index.html
-
-* Try:
-> Run with --scan to get full insights.
-
-BUILD FAILED in 765ms
-2 actionable tasks: 1 executed, 1 up-to-date
 ```
