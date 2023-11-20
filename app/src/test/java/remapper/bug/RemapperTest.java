@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -19,6 +22,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.ClassRemapper;
 import org.objectweb.asm.commons.Remapper;
+import org.objectweb.asm.util.CheckClassAdapter;
 
 class RemapperTest {
   @Test
@@ -31,8 +35,9 @@ class RemapperTest {
 
     ClassReader classReader = new ClassReader(bytecode);
     ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+    ClassVisitor classVisitor = new CheckClassAdapter(classWriter);
 
-    ClassRemapper classRemapper = new ClassRemapper(classWriter, remapper);
+    ClassRemapper classRemapper = new ClassRemapper(classVisitor, remapper);
 
     classReader.accept(classRemapper, ClassReader.EXPAND_FRAMES);
 
@@ -43,5 +48,9 @@ class RemapperTest {
     ClassVisitor visitor = new ClassVisitor(Opcodes.ASM9, classWriter2) {};
     classReader2.accept(visitor, ClassReader.EXPAND_FRAMES);
 
+
+
   }
 }
+
+
